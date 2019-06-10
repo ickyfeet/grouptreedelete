@@ -13,6 +13,7 @@ def getchildgroups(parentgroup):
 
 def deleteattendances(group):
 
+    pass
     #Get attendance occurrences
 
     #Loop through and delete all attendances
