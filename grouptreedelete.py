@@ -2,13 +2,28 @@ import requests
 import argparse
 import json
 
+
 def getchildgroups(parentgroup):
 
     groupurl = f'{url}/api/Groups?$filter=ParentGroupId eq {parentgroup}'
 
     parentrequest = requests.get(groupurl, headers=apiheaders)
 
-    childgroupsparsed = json.loads(parentrequest.text)
+    childgroupsraw = parentrequest.text
+
+    childrenparsed = json.loads(childgroupsraw)
+
+    for i in childrenparsed:
+
+        if i  != '[]':
+
+            getchildgroups(i[Id])
+
+        else:
+
+            deleteattendances(i[Id])
+
+    
 
 
 def deleteattendances(group):
