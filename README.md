@@ -6,9 +6,9 @@ Feed this guy a Rock group id and it will delete the group and all the groups, a
 
 Pass the following arguments at the command line, all are required:
 
--u Rock RMS URL
--k Rock RMS API Key
--g Rock RMS Group ID
+-u Rock RMS URL  
+-k Rock RMS API Key  
+-g Rock RMS Group ID  
 
 Example:
 
