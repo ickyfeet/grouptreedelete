@@ -23,7 +23,7 @@ def getchildgroups(parentgroup):
 
             deleteattendances(i[Id])
 
-    
+            deletegroup(i[Id])    
 
 
 def deleteattendances(group):
