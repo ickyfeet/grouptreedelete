@@ -9,9 +9,9 @@ def getchildgroups(parentgroup):
 
     parentrequest = requests.get(groupurl, headers=apiheaders)
 
-    childgroupsraw = parentrequest.text
+    childgroupstext = parentrequest.text
 
-    childrenparsed = json.loads(childgroupsraw)
+    childrenparsed = json.loads(childgroupstext)
 
     for i in childrenparsed:
 
@@ -23,17 +23,61 @@ def getchildgroups(parentgroup):
 
             deleteattendances(i['Id'])
 
-            deletegroup(i['Id'])    
+            deletegroup(i['Id'])
+
+    deletegroup(i['Id'])    
 
 
 def deleteattendances(group):
 
-    pass
+    occurrencesurl = f'{url}/api/AttendanceOccurrences?$filter=GroupId eq {group}'
+
+    occurrencesrequest = requests.get(occurrencesurl, headers=apiheaders)
+
+    occurrencestext = occurrencesrequest.text
+
+    occurrencesparsed = json.loads(occurrencestext)
+
+    for i in occurrencesparsed:
+
+        occurrenceid = i['Id']
+
+        if i != '[]':
+
+            attendanceurl = f'{url}/api/Attendances?$filter=OccurrenceId eq {occurrenceid}'
+
+            attendancerequest = requests.get(attendanceurl, headers=apiheaders)
+
+            attendancetext = attendancerequest.text
+
+            attendanceparsed = json.loads(attendancetext)
+
+            for j in attendanceparsed:
+
+                attendanceid = j['Id']
+
+                deleteattendanceurl = f'{url}/api/Attendances/{attendanceid}'
+
+                requests.delete(deleteattendanceurl, headers=apiheaders)
+
+            deleteoccurenceurl = f'{url}/api/AttendanceOccurrence/{occurrenceid}'
+
+        else:
+
+            """Delete the attendance occurence if empty"""
+
+            
+
+                
+
+    
 
 
 def deletegroup(group):
 
     pass
+
+
     #Get attendance occurrences
 
     #Loop through and delete all attendances
@@ -66,6 +110,4 @@ url = args.rockurl
 apiheaders = f"{{'Content-Type': 'application/json', 'Authorization-Token': '{args.apikey}'}}"
 
 toplevelgroup = args.groupid
-
-
 
