@@ -60,29 +60,23 @@ def deleteattendances(group):
 
                 requests.delete(deleteattendanceurl, headers=apiheaders)
 
-            deleteoccurenceurl = f'{url}/api/AttendanceOccurrence/{occurrenceid}'
+            deleteoccurrenceurl = f'{url}/api/AttendanceOccurrence/{occurrenceid}'
+
+            requests.delete(deleteoccurrenceurl, headers=apiheaders)
 
         else:
 
-            """Delete the attendance occurence if empty"""
+            deleteoccurrenceurl = f'{url}/api/AttendanceOccurrence/{occurrenceid}'
 
-            
-
-                
-
-    
+            requests.delete(deleteoccurrenceurl, headers=apiheaders)  
 
 
 def deletegroup(group):
 
-    pass
+    groupurl = f'{url}/api/Groups/{group}'
 
+    requests.delete(groupurl, headers=apiheaders)
 
-    #Get attendance occurrences
-
-    #Loop through and delete all attendances
-
-    #Delete attendance occurrence
 
 
 # Initialize argparse
