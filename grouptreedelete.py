@@ -8,7 +8,7 @@ def getchildgroups(parentgroup):
     groupurl = f'{url}/api/Groups?$filter=ParentGroupId eq {parentgroup}'
 
     parentrequest = requests.get(groupurl, headers=apiheaders)
-
+    
     childgroupstext = parentrequest.text
 
     childrenparsed = json.loads(childgroupstext)
@@ -19,13 +19,13 @@ def getchildgroups(parentgroup):
 
             getchildgroups(i['Id'])
 
+            deletegroup(i['Id'])
+
         else:
 
             deleteattendances(i['Id'])
 
             deletegroup(i['Id'])
-
-    deletegroup(i['Id'])    
 
 
 def deleteattendances(group):
@@ -101,7 +101,13 @@ args = parser.parse_args()
 
 url = args.rockurl
 
-apiheaders = f"{{'Content-Type': 'application/json', 'Authorization-Token': '{args.apikey}'}}"
+key = args.apikey
+
+apiheaders = {'Content-Type': 'application/json', 'Authorization-Token': key}
 
 toplevelgroup = args.groupid
+
+getchildgroups(toplevelgroup)
+
+deletegroup(toplevelgroup)
 
