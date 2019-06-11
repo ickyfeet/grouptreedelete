@@ -17,16 +17,21 @@ def getchildgroups(parentgroup):
 
         if i  != '[]':
 
-            getchildgroups(i[Id])
+            getchildgroups(i['Id'])
 
         else:
 
-            deleteattendances(i[Id])
+            deleteattendances(i['Id'])
 
-            deletegroup(i[Id])    
+            deletegroup(i['Id'])    
 
 
 def deleteattendances(group):
+
+    pass
+
+
+def deletegroup(group):
 
     pass
     #Get attendance occurrences
