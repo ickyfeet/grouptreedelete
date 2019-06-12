@@ -11,6 +11,8 @@ def getchildgroups(parentgroup):
     
     childgroupstext = parentrequest.text
 
+    print(childgroupstext)
+
     childrenparsed = json.loads(childgroupstext)
 
     for i in childrenparsed:
@@ -19,11 +21,15 @@ def getchildgroups(parentgroup):
 
             getchildgroups(i['Id'])
 
+            deletehistoricals(i['Id'])
+
             deletegroup(i['Id'])
 
         else:
 
             deleteattendances(i['Id'])
+
+            deletehistoricals(i['Id'])
 
             deletegroup(i['Id'])
 
@@ -76,6 +82,31 @@ def deletegroup(group):
     groupurl = f'{url}/api/Groups/{group}'
 
     requests.delete(groupurl, headers=apiheaders)
+
+
+def deletehistoricals(group):
+
+    historicalurl = f'{url}/api/GroupHistoricals?$filter=GroupId eq {group}'
+
+    print(historicalurl)
+
+    historicalrequest = requests.get(historicalurl, headers=apiheaders)
+
+    print(historicalrequest.text)
+    
+    historicaltext = historicalrequest.text
+
+    historicalparsed = json.loads(historicaltext)
+
+    for h in historicalparsed:
+
+        historicalid = h['Id']
+
+        print(historicalid)
+
+        deletehistoricalurl = f'{url}/api/GroupHistoricals/{historicalid}'
+
+        requests.delete(deletehistoricalurl, headers=apiheaders)
 
 
 
