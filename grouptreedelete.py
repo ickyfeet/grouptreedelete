@@ -5,38 +5,36 @@ import json
 
 def getchildgroups(parentgroup):
 
-    groupurl = f'{url}/api/Groups?$filter=ParentGroupId eq {parentgroup}'
+    groupurl = f"{url}/api/Groups?$filter=ParentGroupId eq {parentgroup}"
 
     parentrequest = requests.get(groupurl, headers=apiheaders)
-    
-    childgroupstext = parentrequest.text
 
-    print(childgroupstext)
+    childgroupstext = parentrequest.text
 
     childrenparsed = json.loads(childgroupstext)
 
     for i in childrenparsed:
 
-        if i  != '[]':
+        if i != "[]":
 
-            getchildgroups(i['Id'])
+            getchildgroups(i["Id"])
 
-            deletehistoricals(i['Id'])
+            deletehistoricals(i["Id"])
 
-            deletegroup(i['Id'])
+            deletegroup(i["Id"])
 
         else:
 
-            deleteattendances(i['Id'])
+            deleteattendances(i["Id"])
 
-            deletehistoricals(i['Id'])
+            deletehistoricals(i["Id"])
 
-            deletegroup(i['Id'])
+            deletegroup(i["Id"])
 
 
 def deleteattendances(group):
 
-    occurrencesurl = f'{url}/api/AttendanceOccurrences?$filter=GroupId eq {group}'
+    occurrencesurl = f"{url}/api/AttendanceOccurrences?$filter=GroupId eq {group}"
 
     occurrencesrequest = requests.get(occurrencesurl, headers=apiheaders)
 
@@ -46,11 +44,13 @@ def deleteattendances(group):
 
     for i in occurrencesparsed:
 
-        occurrenceid = i['Id']
+        occurrenceid = i["Id"]
 
-        if i != '[]':
+        if i != "[]":
 
-            attendanceurl = f'{url}/api/Attendances?$filter=OccurrenceId eq {occurrenceid}'
+            attendanceurl = (
+                f"{url}/api/Attendances?$filter=OccurrenceId eq {occurrenceid}"
+            )
 
             attendancerequest = requests.get(attendanceurl, headers=apiheaders)
 
@@ -60,54 +60,53 @@ def deleteattendances(group):
 
             for j in attendanceparsed:
 
-                attendanceid = j['Id']
+                attendanceid = j["Id"]
 
-                deleteattendanceurl = f'{url}/api/Attendances/{attendanceid}'
+                deleteattendanceurl = f"{url}/api/Attendances/{attendanceid}"
 
                 requests.delete(deleteattendanceurl, headers=apiheaders)
 
-            deleteoccurrenceurl = f'{url}/api/AttendanceOccurrence/{occurrenceid}'
+            deleteoccurrenceurl = f"{url}/api/AttendanceOccurrence/{occurrenceid}"
 
             requests.delete(deleteoccurrenceurl, headers=apiheaders)
 
         else:
 
-            deleteoccurrenceurl = f'{url}/api/AttendanceOccurrence/{occurrenceid}'
+            deleteoccurrenceurl = f"{url}/api/AttendanceOccurrence/{occurrenceid}"
 
-            requests.delete(deleteoccurrenceurl, headers=apiheaders)  
+            requests.delete(deleteoccurrenceurl, headers=apiheaders)
 
 
 def deletegroup(group):
 
-    groupurl = f'{url}/api/Groups/{group}'
+    groupurl = f"{url}/api/Groups/{group}"
+
+    changegrouptypedata = """{ 
+        "GroupTypeId": 357
+    }"""
+
+    requests.patch(groupurl, changegrouptypedata, headers=apiheaders)
 
     requests.delete(groupurl, headers=apiheaders)
 
 
 def deletehistoricals(group):
 
-    historicalurl = f'{url}/api/GroupHistoricals?$filter=GroupId eq {group}'
-
-    print(historicalurl)
+    historicalurl = f"{url}/api/GroupHistoricals?$filter=GroupId eq {group}"
 
     historicalrequest = requests.get(historicalurl, headers=apiheaders)
 
-    print(historicalrequest.text)
-    
     historicaltext = historicalrequest.text
 
     historicalparsed = json.loads(historicaltext)
 
     for h in historicalparsed:
 
-        historicalid = h['Id']
+        historicalid = h["Id"]
 
-        print(historicalid)
-
-        deletehistoricalurl = f'{url}/api/GroupHistoricals/{historicalid}'
+        deletehistoricalurl = f"{url}/api/GroupHistoricals/{historicalid}"
 
         requests.delete(deletehistoricalurl, headers=apiheaders)
-
 
 
 # Initialize argparse
@@ -121,12 +120,17 @@ parser = argparse.ArgumentParser()
                 group will be deleted as well
 """
 
-parser.add_argument("-u", "--rockurl", required=True, type=str,
-                    help="The URL of your Rock server")
-parser.add_argument("-k", "--apikey", required=True, type=str,
-                    help="Your Rock API key")
-parser.add_argument("-g", "--groupid", required=True, type=str,
-                    help="The group id that you wish to delete")
+parser.add_argument(
+    "-u", "--rockurl", required=True, type=str, help="The URL of your Rock server"
+)
+parser.add_argument("-k", "--apikey", required=True, type=str, help="Your Rock API key")
+parser.add_argument(
+    "-g",
+    "--groupid",
+    required=True,
+    type=str,
+    help="The group id that you wish to delete",
+)
 
 args = parser.parse_args()
 
@@ -134,7 +138,7 @@ url = args.rockurl
 
 key = args.apikey
 
-apiheaders = {'Content-Type': 'application/json', 'Authorization-Token': key}
+apiheaders = {"Content-Type": "application/json", "Authorization-Token": key}
 
 toplevelgroup = args.groupid
 
